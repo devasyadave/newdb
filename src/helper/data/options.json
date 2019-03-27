@@ -1,7 +1,7 @@
 {
     "mo_saml_host_name": "https://auth.miniorange.com",
     "mo_saml_admin_email": "swati@miniorange.in",
-    "mo_saml_admin_password": "",
+    "mo_saml_admin_password": "demouser",
     "mo_saml_admin_customer_key": 16622,
     "mo_saml_admin_api_key": "XzjkmAaAOzmtJRmXddkXyhgDXnMCrdZz",
     "mo_saml_customer_token": "cfIGGuiZNekW1C7f",

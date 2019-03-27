@@ -25,7 +25,6 @@ class ssoServiceProvider extends ServiceProvider
      */
     public function boot()
     {
-        //require_once 'autoload.php';
          $this->loadMigrationsFrom(__DIR__.'/../src/2014_10_12_100000_create_miniorange_tables.php');
          $this->loadRoutesFrom(__DIR__.'/../src/routes.php');
          $this->loadViewsFrom(__DIR__.'/../src/','newidea');

@@ -7,7 +7,6 @@ use MiniOrange\Helper\PluginSettings;
 use MiniOrange\Classes\Actions\AuthFacadeController;
 use Illuminate\Http\Request;
 
-
 $pluginSettings = PluginSettings::getPluginSettings();
 $logout_url = $pluginSettings->getSiteLogoutUrl();
 
@@ -17,7 +16,7 @@ if (isset($_REQUEST['SAMLResponse'])) {
     if (array_key_exists('SAMLResponse', $_GET) && ! empty($_GET['SAMLResponse'])) {
         $samlResponse = gzinflate($samlResponse);
     }
-   
+
     $document = new DOMDocument();
     $document->loadXML($samlResponse);
     $samlResponseXml = $document->firstChild;
@@ -26,13 +25,15 @@ if (isset($_REQUEST['SAMLResponse'])) {
     $xpath->registerNamespace('samlp', 'urn:oasis:names:tc:SAML:2.0:protocol');
     $xpath->registerNamespace('saml', 'urn:oasis:names:tc:SAML:2.0:assertion');
     if ($samlResponseXml->localName == 'LogoutResponse') {
-        if($logout_url=='')
-        header('Location: /' .$logout_url);
+        if ($logout_url == '')
+            header('Location: /' . $logout_url);
         else
-            header('Location: '.$logout_url);
-        exit;
-        /*header('Location: mologout');
-        exit();*/
+            header('Location: ' . $logout_url);
+        exit();
+        /*
+         * header('Location: mologout');
+         * exit();
+         */
     }
 }
 
@@ -74,7 +75,7 @@ if (! empty($pluginSettings->getSamlLogoutUrl())) {
         exit();
     }
 }
-if (!empty($logout_url)) {
+if (! empty($logout_url)) {
     session_destroy();
     header("Location: $logout_url");
     exit();

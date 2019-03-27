@@ -14,7 +14,7 @@ class CreateMiniorangeTables extends Migration
     public function up()
     {
         Schema::create('mo_config', function (Blueprint $table) {
-            $table->string('id', 10);
+            $table->string('id', 10)->unique();
             $table->string('mo_saml_host_name', 100);
             $table->string('mo_saml_admin_email', 100);
             $table->string('mo_saml_admin_password', 100);
@@ -50,8 +50,10 @@ class CreateMiniorangeTables extends Migration
             $table->string('mo_saml_verify_customer', 10);
             $table->string('mo_saml_idp_config_complete', 100);
             $table->string('mo_saml_transactionId', 100);
+            $table->string('mo_saml_guest_enabled',10);
         });
         Schema::create('mo_admin', function (Blueprint $table) {
+            $table->string('id',10);
             $table->string('email', 100);
             $table->string('password', 100);
         });

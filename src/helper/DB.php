@@ -1,44 +1,28 @@
 <?php
 namespace MiniOrange\Helper;
 
-use Illuminate\Support\Facades\DB as LaraDB;
-use App\Http\Controllers\Controller;
+use Illuminate\Database\Capsule\Manager as LaraDB;
+use Illuminate\Routing\Controller;
+use Artisan;
+use Illuminate\Support\Facades\Schema;
 
+if(!Schema::hasTable('mo_admin') || !Schema::hasTable('mo_config')) {
+    echo "here";exit;
+    Artisan::call('migrate', array('--path' => __DIR__.'../2014_10_12_100000_create_miniorange_tables.php','--force'=>TRUE));}
 
 class DB extends Controller
 {
 
-    // private static $db_file_path = dirname(__FILE__) . '\helper\data\options.json';
     public static function get_option($key)
     {
-        /*
-         * $options = self::get_options();
-         * if(!empty($options)){
-         * if(array_key_exists($key, $options)){
-         * return $options[$key];
-         * } else {
-         * return false;
-         * }
-         * } else {
-         * return false;
-         * }
-         */
-        return LaraDB::table('mo_config')->first()->value($key);
-        
+        self::startConnection();
+        $option = LaraDB::table('mo_config')->first()->$key;
+        return $option;
     }
 
     public static function update_option($key, $value)
     {
-        /*
-         * $tempOptions = self::get_options();
-         * if(empty($tempOptions))
-         * $tempOptions = array();
-         * $update = array($key => $value);
-         * $updatedOptions = array_merge($tempOptions, $update);
-         * $file = self::getOptionsFilePath();
-         * $json_string = json_encode($updatedOptions, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES);
-         * if($file!==null)file_put_contents($file, $json_string);
-         */
+        self::startConnection();
         LaraDB::table('mo_config')->where('id', 1)->update([
             $key => $value
         ]);
@@ -46,13 +30,7 @@ class DB extends Controller
 
     public static function delete_option($key)
     {
-        /*
-         * $options = self::get_options();
-         * unset($options[$key]);
-         * $file = self::getOptionsFilePath();
-         * $json_string = json_encode($options, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES);
-         * if($file!==null)file_put_contents($file, $json_string);
-         */
+        self::startConnection();
         LaraDB::table('mo_config')->where('id', 1)->update([
             $key => ''
         ]);
@@ -60,22 +38,44 @@ class DB extends Controller
 
     protected static function get_options()
     {
-        /*
-         * $str='';
-         * if((file_exists(self::getOptionsFilePath())))
-         * $str = file_get_contents(self::getOptionsFilePath());
-         *
-         * $customer_array = json_decode($str, true);
-         * return $customer_array;
-         */
+        self::startConnection();
         $active_config = LaraDB::table('mo_config')->get()->first();
         return $active_config;
     }
-
-    public static function getOptionsFilePath()
+    
+    public static function get_registered_user()
     {
-        // if(file_exists(dirname(__FILE__) . '\data\options.json'))
-        return dirname(__FILE__) . '\data\options.json';
+        self::startConnection();
+        $registered_user = LaraDB::table('mo_admin')->get()->first();
+        return $registered_user;
+    }
+
+    public static function register_user($email, $password){
+        self::startConnection();
+        LaraDB::table('mo_admin')->updateOrInsert(['id' => 1],['email' => $email,'password' => $password]);
+    }
+    protected static function startConnection()
+    {
+        $connection = array(
+            'driver' => getenv('DB_CONNECTION'),
+            'host' => getenv('DB_HOST'),
+            'port' => getenv('DB_PORT'),
+            'database' => getenv('DB_DATABASE'),
+            'username' => getenv('DB_USERNAME'),
+            'password' => getenv('DB_PASSWORD')
+        );
+        $Capsule = new LaraDB();
+        $Capsule->addConnection($connection);
+        $Capsule->setAsGlobal(); // this is important
+        $Capsule->bootEloquent();
+        if(LaraDB::table('mo_config')->get()->first()==NULL)
+        {
+            if(LaraDB::table('mo_config')->updateOrInsert(
+                ['id' => 1],['mo_saml_host_name' => 'https://auth.miniorange.com']))
+            {
+                
+            }
+        }
     }
 }
 ?>

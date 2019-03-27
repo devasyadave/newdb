@@ -137,6 +137,7 @@ if(!class_exists("DB")){
 
         function get_customer_key() {
             $url = DB::get_option ( 'mo_saml_host_name' ) . "/moas/rest/customer/key";
+            //echo $url;exit;
             $ch = curl_init ( $url );
             $email = DB::get_option ( "mo_saml_admin_email" );
             
@@ -147,7 +148,7 @@ if(!class_exists("DB")){
                     'password' => $password 
             );
             $field_string = json_encode ( $fields );
-            
+
             curl_setopt ( $ch, CURLOPT_FOLLOWLOCATION, true );
             curl_setopt ( $ch, CURLOPT_ENCODING, "" );
             curl_setopt ( $ch, CURLOPT_RETURNTRANSFER, true );
@@ -165,14 +166,6 @@ if(!class_exists("DB")){
             
             $content = curl_exec ( $ch );
             return $content;
-           /* if (curl_errno ( $ch )) {
-                echo "169";
-                echo "$ch Error in sending curl Request";
-                exit ();
-            }
-            curl_close ( $ch );
-            
-            return $content;*/
         }
 
         function mo_saml_vl($code,$active) {
