@@ -2,6 +2,8 @@
 use MiniOrange\Helper\DB;
 use MiniOrange\Helper\Lib\AESEncryption;
 use Illuminate\Support\Facades\Schema;
+use MiniOrange\Helper\Constants;
+use MiniOrange\Classes\Actions\DatabaseController as DBinstaller;
 
 if (! defined('MSSP_VERSION'))
     define('MSSP_VERSION', '1.0.0');
@@ -11,9 +13,18 @@ if (! defined('MSSP_DIR'))
     define('MSSP_DIR', __DIR__);
 if (! defined('MSSP_TEST_MODE'))
     define('MSSP_TEST_MODE', FALSE);
-include_once 'Classes/Customer.php';
 
-// check if the directory containing CSS,JS,Resources exists
+//Check if Database Tables have been installed after package install
+    /*try {
+        DB::get_option('id');
+    } catch (\PDOException $e) {
+        DBinstaller::installTables();
+        echo "Setting up database for MiniOrange SAML SP for Laravel...You will be redirected to homepage in 5 seconds";
+        header('refresh:6;url=');
+        exit;
+    }*/
+
+// check if the directory containing CSS,JS,Resources exists in the root folder of the site
 if (! is_dir($_SERVER['DOCUMENT_ROOT'] . '/miniorange/sso')) {
     // copy miniorange css,js,images,etc assets to root folder of laravel app
     $file_paths_array = array(

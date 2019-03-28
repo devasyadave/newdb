@@ -1,8 +1,6 @@
 <?php
 use MiniOrange\Helper\DB;
-if(!class_exists("DB")){
-    
-}
+
     class CustomerSaml{
         public $email;
         

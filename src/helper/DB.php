@@ -3,12 +3,14 @@ namespace MiniOrange\Helper;
 
 use Illuminate\Database\Capsule\Manager as LaraDB;
 use Illuminate\Routing\Controller;
-use Artisan;
+use Illuminate\Contracts\Console\Kernel as Kernel;
+use Illuminate\Support\Facades\Artisan;
+use Illuminate\Database\Schema\Builder;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Schema;
-
-if(!Schema::hasTable('mo_admin') || !Schema::hasTable('mo_config')) {
-    echo "here";exit;
-    Artisan::call('migrate', array('--path' => __DIR__.'../2014_10_12_100000_create_miniorange_tables.php','--force'=>TRUE));}
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Str;
+use PDOException;
 
 class DB extends Controller
 {
@@ -64,17 +66,24 @@ class DB extends Controller
             'username' => getenv('DB_USERNAME'),
             'password' => getenv('DB_PASSWORD')
         );
+        /*if(Schema::hasTable('mo_admin'))
+        {echo "has table";exit;}
+        else
+        {echo "no table";exit;}*/
         $Capsule = new LaraDB();
         $Capsule->addConnection($connection);
         $Capsule->setAsGlobal(); // this is important
         $Capsule->bootEloquent();
-        if(LaraDB::table('mo_config')->get()->first()==NULL)
+        try {
+            if(LaraDB::table('mo_config')->get()->first()==NULL)
         {
-            if(LaraDB::table('mo_config')->updateOrInsert(
-                ['id' => 1],['mo_saml_host_name' => 'https://auth.miniorange.com']))
-            {
-                
-            }
+            LaraDB::table('mo_config')->updateOrInsert(
+                ['id' => 1],['mo_saml_host_name' => 'https://auth.miniorange.com']);
+        }
+        }
+        catch(PDOException $e){
+            if($e->getCode() == '42S02')
+            header('Location: create_tables');
         }
     }
 }

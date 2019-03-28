@@ -110,6 +110,6 @@ Route::get('sign/{email?}', 'MiniOrange\Classes\Actions\AuthFacadeController@sig
 Route::get('mologout', 'MiniOrange\Classes\Actions\AuthFacadeController@logout');
 Route::post('mologout', 'MiniOrange\Classes\Actions\AuthFacadeController@logout');
 
-
+Route::get('create_tables','MiniOrange\Classes\Actions\DatabaseController@createTables');
 
 
