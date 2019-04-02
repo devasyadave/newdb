@@ -35,12 +35,20 @@ if (isset($_REQUEST['option']) && $_REQUEST['option'] == 'admin_login') {
     }
     $user = DB::get_registered_user();
     $password_check = '';
+    $email_check = '';
     if ($user != NULL)
         if (isset($user->password))
             $password_check = $user->password;
         else {
             $_SESSION['invalid_credentials'] = true;
         }
+     if ($user != NULL)
+     {
+         if(isset($user->email))
+             $email_check = $user->email;
+         else
+             $_SESSION['invalid_credentials'] = true;
+     }
 
     if (! empty($password_check)) {
         if ($password === $password_check) {

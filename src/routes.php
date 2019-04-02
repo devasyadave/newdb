@@ -2,8 +2,6 @@
 use MiniOrange\Classes\Actions\AuthFacadeController;
 
 Route::get('mo_admin', function () {
-    session_id('connector');
-    session_start();
     include_once 'index.php';
 });
 

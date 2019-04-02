@@ -4,7 +4,6 @@
  * Version: 11.0.0
  * Author: miniOrange
  */
-include_once 'connector.php';
 
 if (session_id() == 'connector') {
     if (is_user_registered()==NULL) {
