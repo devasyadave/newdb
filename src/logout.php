@@ -1,5 +1,4 @@
 <?php
-
 // include_once "autoload.php";
 use MiniOrange\Helper\Lib\XMLSecLibs\XMLSecurityKey;
 use MiniOrange\Helper\Lib\XMLSecLibs\XMLSecurityDSig;
@@ -79,6 +78,10 @@ if (! empty($logout_url)) {
     session_destroy();
     header("Location: $logout_url");
     exit();
+}
+else{
+    header("Location: /");
+    exit;
 }
 
 function createLogoutRequest($nameId, $sessionIndex = '', $issuer, $destination, $slo_binding_type = 'HttpRedirect')

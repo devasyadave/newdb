@@ -59,7 +59,8 @@ function recurse_copy($src, $dst)
 if (isset($_SERVER['REQUEST_URI'])) {
     if (strpos($_SERVER['REQUEST_URI'], '/login') !== FALSE) {
         if (DB::get_option('force_sso') == TRUE) {
-            include_once 'login.php';
+            echo '<strong style="margin:34%;">Forced Single Sign On Configured. You will redirected to '.DB::get_option('saml_identity_name').' IdP</strong>';
+            header('refresh:5;url=login.php');
         }
         // for generating a login button on login page
         echo '<script>
@@ -205,7 +206,7 @@ if (isset($_POST['option']) && $_POST['option'] == 'mo_saml_verify_license') {
             mo_saml_show_success_message();
         } else if (strcasecmp($content['status'], 'FAILED') == 0) {
             if (strcasecmp($content['message'], 'Code has Expired') == 0) {
-                DB::update_option('mo_saml_message', 'License key you have entered has already been used. Please enter a key which has not been used before on any other instance or if you have exausted all your keys then buy more.');
+                DB::update_option('mo_saml_message', 'License key you have entered has already been used. Please enter a key which has not been used before on any other instance or if you have exhausted all your keys, then buy more.');
             } else {
                 DB::update_option('mo_saml_message', 'You have entered an invalid license key. Please enter a valid license key.');
             }
@@ -319,7 +320,7 @@ if (isset($_POST['option']) && $_POST['option'] == 'save_connector_settings') {
 
         DB::update_option('mo_saml_message', 'Settings saved successfully.');
         mo_saml_show_success_message();
-
+        //var_dump($saml_x509_certificate);exit;
         if (empty($saml_x509_certificate)) {
             DB::update_option("mo_saml_message", 'Invalid Certificate:Please provide a certificate');
             mo_saml_show_error_message();
@@ -350,6 +351,7 @@ if (isset($_POST['option']) && $_POST['option'] == 'attribute_mapping') {
         $value = $_POST['attribute_value'];
         $custom_attrs = array_combine($key, $value);
         $custom_attrs = array_filter($custom_attrs);
+        $custom_attrs = serialize($custom_attrs);
         DB::update_option('mo_saml_custom_attrs_mapping', $custom_attrs);
     }
     DB::update_option('mo_saml_message', 'Attribute Mapping details saved successfully');
@@ -659,7 +661,7 @@ function mo_saml_show_verify_license_page()
 				class="form-control" required type="text"
 				style="margin-left: 40px; width: 300px;" name="saml_license_key"
 				id="saml_license_key"
-				placeholder="Enter your license key to activate the conenctor" />
+				placeholder="Enter your license key to activate the connector" />
 		</div>
 
 		<ol>
@@ -667,7 +669,7 @@ function mo_saml_show_verify_license_page()
 				instance. In future, if you are re-installing the connector or your
 				site for any reason, you should logout of your miniOrange account
 				from the connector and then delete the connector. So that you can
-				resuse the same license key.</li>
+				reuse the same license key.</li>
 			<br>
 			<li><b>This is not a developer's license.</b> Making any kind of
 				change to the connector's code will delete all your configuration

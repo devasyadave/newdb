@@ -39,12 +39,12 @@
 	<div class="app-sidebar__overlay" data-toggle="sidebar"></div>
 
 	<aside class="app-sidebar">
-		<div class="app-sidebar__user" style="padding-left: 40px">
+		<div class="app-sidebar__user" style="padding-left: 9%">
 			<img src="miniorange/sso/resources/images/miniorange.png"
 				style="width: 37.25px; height: 50px;" alt="User Image">
 			<div style="margin-left: 15px;">
-				<p class="app-sidebar__user-name">PHP SAML</p>
-				<p class="app-sidebar__user-designation">Connector</p>
+				<p class="app-sidebar__user-name">Laravel SSO SP</p>
+				<p class="app-sidebar__user-designation">Plugin</p>
 			</div>
 		</div>
 		<ul class="app-menu">
@@ -104,6 +104,7 @@
 								<div class="form-group">
 									<label for="idp_name"><b>Identity Provider Name</b></label> <input
 										class="form-control" name="idp_name" id="idp_name" type="text"
+										required
 										<?php
         echo ' value="' . DB::get_option('saml_identity_name') . '" ';
         ?>>
@@ -173,8 +174,8 @@
 									<label for="x509_certificate"><b>SAML x509 Certificate</b></label>
 									<textarea class="form-control" id="x509_certificate"
 										name="x509_certificate" rows="5"><?php echo DB::get_option('saml_x509_certificate');?></textarea>
-									<small><b>NOTE:</b> Format of the certificate:<br />
-									<b>-----BEGIN CERTIFICATE-----<br />XXXXXXXXXXXXXXXXXXXXXXXXXXX<br />-----END
+									<small><b>NOTE:</b> Format of the certificate:<br /> <b>-----BEGIN
+											CERTIFICATE-----<br />XXXXXXXXXXXXXXXXXXXXXXXXXXX<br />-----END
 											CERTIFICATE-----
 									</b></small><br />
 								</div>
@@ -199,8 +200,7 @@
         if (DB::get_option('force_authentication') != false) {
             echo ' checked ';
         }
-        ?>><span class="label-text">Force
-											Authentication</span>
+        ?>><span class="label-text">Force Authentication</span>
 									</label>&nbsp
 
 								</div>
@@ -210,10 +210,9 @@
         if (DB::get_option('force_sso') != false) {
             echo ' checked ';
         }
-        ?>><span class="label-text">Force Single Sign
-											On</span>
-									</label>&nbsp
-
+        ?>><span class="label-text">Force Single Sign On</span>
+									</label>&nbsp <input hidden="true" id="saml_submit"
+										type="submit">
 								</div>
 						
 						</div>
@@ -276,114 +275,115 @@
 									style="display: none;">Provide this certificate to your
 									Identity Provider for encryption or signing.</div>
 							</div>
+						
+						
+						</form>
+						<br> <br>
+						<h4>Attribute Mapping</h4>
+						<br>
 
-							</form>
-							<br>
-							<br>
-							<h4>Attribute Mapping</h4>
-							<br>
-
-							<form id="attrs_form" method="post" action="">
-								<input type="hidden" name="option" value="attribute_mapping">
-								<div class="form-group">
-									<label for="saml_am_email"><b>EMAIL</b></label> <input
-										class="form-control" id="saml_am_email" name="saml_am_email"
-										type="text"
-										<?php
+						<form id="attrs_form" method="post" action="">
+							<input type="hidden" name="option" value="attribute_mapping">
+							<div class="form-group">
+								<label for="saml_am_email"><b>EMAIL</b></label> <input
+									class="form-control" id="saml_am_email" name="saml_am_email"
+									type="text"
+									<?php
         echo ' value="' . DB::get_option('saml_am_email') . '" ';
         ?>>
-								</div>
+							</div>
 
 
 
-								<div class="form-group">
-									<label for="saml_am_username"><b>Username</b></label> <input
-										class="form-control" id="saml_am_username"
-										name="saml_am_username" type="text"
-										<?php
+							<div class="form-group">
+								<label for="saml_am_username"><b>Username</b></label> <input
+									class="form-control" id="saml_am_username"
+									name="saml_am_username" type="text"
+									<?php
         echo ' value="' . DB::get_option('saml_am_username') . '" ';
         ?>>
-								</div>
+							</div>
 
-								<h4>Custom Attribute Mapping</h4>
-								<div data-role="dynamic-fields">
+							<h4>Custom Attribute Mapping</h4>
+							<div data-role="dynamic-fields">
                             <?php
-
-if (DB::get_option('mo_saml_custom_attrs_mapping')) {
-                                foreach (DB::get_option('mo_saml_custom_attrs_mapping') as $key => $value) {
+                            $custom_attrs = unserialize(DB::get_option('mo_saml_custom_attrs_mapping'));
+                            if (sizeof($custom_attrs) > 0) {
+                                foreach ($custom_attrs as $key => $value) {
                                     ?>
                           
                             <div class="form-inline">
-										<div class="form-group" style="padding-bottom: 5px">
-											<input type="text" class="form-control" id="attribute_name"
-												name="attribute_name[]" placeholder="Attribute Name"
-												value="<?php echo $key;?>"> <span>&nbsp;</span> <input
-												type="text" class="form-control" id="attribute_value"
-												name="attribute_value[]" placeholder="Attribute Value"
-												value="<?php echo $value;?>"> <span>&nbsp;</span>
-											<button class="btn btn-danger" data-role="remove"
-												id="remove_button">
-												<span class="glyphicon glyphicon-remove"></span>
-											</button>
-											<button class="btn btn-primary" data-role="add"
-												id="add_button">
-												<span class="glyphicon glyphicon-plus"></span>
-											</button>
-										</div>
+									<div class="form-group" style="padding-bottom: 5px">
+										<input type="text" class="form-control" id="attribute_name"
+											name="attribute_name[]" placeholder="Attribute Name"
+											value="<?php echo $key;?>"> <span>&nbsp;</span> <input
+											type="text" class="form-control" id="attribute_value"
+											name="attribute_value[]" placeholder="Attribute Value"
+											value="<?php echo $value;?>"> <span>&nbsp;</span>
+										<button class="btn btn-danger" data-role="remove"
+											id="remove_button">
+											<span class="glyphicon glyphicon-remove"></span>
+										</button>
+										<button class="btn btn-primary" data-role="add"
+											id="add_button">
+											<span class="glyphicon glyphicon-plus"></span>
+										</button>
 									</div>
-									<!-- /div.form-inline -->
+								</div>
+								<!-- /div.form-inline -->
                           
                             <?php
                                 }
                             } else {
                                 ?>
                             <div class="form-inline">
-										<div class="form-group">
-											<input type="text" class="form-control" id="attribute_name"
-												name="attribute_name[]" placeholder="Attribute Name"> <span>&nbsp;</span>
-											<input type="text" class="form-control" id="attribute_value"
-												name="attribute_value[]" placeholder="Attribute Value"> <span>&nbsp;</span>
-											<button class="btn btn-danger" data-role="remove">
-												<span class="glyphicon glyphicon-remove"></span>
-											</button>
-											<button class="btn btn-primary" data-role="add">
-												<span class="glyphicon glyphicon-plus"></span>
-											</button>
-										</div>
+									<div class="form-group">
+										<input type="text" class="form-control" id="attribute_name"
+											name="attribute_name[]" placeholder="Attribute Name"> <span>&nbsp;</span>
+										<input type="text" class="form-control" id="attribute_value"
+											name="attribute_value[]" placeholder="Attribute Value"> <span>&nbsp;</span>
+										<button class="btn btn-danger" data-role="remove">
+											<span class="glyphicon glyphicon-remove"></span>
+										</button>
+										<button class="btn btn-primary" data-role="add">
+											<span class="glyphicon glyphicon-plus"></span>
+										</button>
 									</div>
-									<!-- /div.form-inline -->
+								</div>
+								<!-- /div.form-inline -->
                               <?php
                             }
                             ?>
                                                   
                     </div>
-								<!-- /div[data-role="dynamic-fileds"] -->
-								<br />
-								<button type="submit" class="btn btn-primary"
-									name="custom_attrs" id="custom_attrs">Save Attribute Mapping</button>
-								<!-- <button type="button" class="btn btn-primary">Add Attribute</button> -->
+							<!-- /div[data-role="dynamic-fileds"] -->
+							<br />
+							<button type="submit" class="btn btn-primary" name="custom_attrs"
+								id="custom_attrs">Save Attribute Mapping</button>
+							<!-- <button type="button" class="btn btn-primary">Add Attribute</button> -->
 
-							</form>
-							<form id="test-form" name="test-form" type="hidden"
-								action="login.php" method="get">
-								<input type="hidden" name="RelayState" value="testconfig"></input>
-							</form>
+						</form>
+						<form id="test-form" name="test-form" type="hidden"
+							action="login.php" method="get">
+							<input type="hidden" name="RelayState" value="testconfig"></input>
+						</form>
 
-						</div>
 					</div>
-					<div class="tile-footer">
-						<button class="btn btn-primary" type="button"
-							name="submit_saml_form" id="submit_saml_form"
-							style="margin-right: 10px;"
-							onClick="jQuery('#saml_form').submit();">Save</button>
-						<a target="_blank" href="login.php?RelayState=testconfig"
-							style="text-decoration: none"><button class="btn btn-primary"
-								name="do_sso" type="button">Test Configuration</button></a>
-					</div>
+			
+			</div>
+			<div class="tile-footer">
+				<button class="btn btn-primary" type="button"
+					name="submit_saml_form" id="submit_saml_form"
+					style="margin-right: 10px;"
+					onClick="jQuery('#saml_submit').click();">Save</button>
+				<a target="_blank" href="login.php?RelayState=testconfig"
+					style="text-decoration: none"><button class="btn btn-primary"
+						name="do_sso" type="button">Test Configuration</button></a>
+			</div>
 
 
-					<hr>
-					<br />
+			<hr>
+			<br />
                     <?php
                     if (! mo_saml_is_customer_license_verified()) {
                         ?>
@@ -392,7 +392,7 @@ if (DB::get_option('mo_saml_custom_attrs_mapping')) {
                     }
                     ?>
                 </div>
-		</div>
+	</div>
 	</div>
 
 	</main>

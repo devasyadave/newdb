@@ -33,12 +33,12 @@
 	<div class="app-sidebar__overlay" data-toggle="sidebar"></div>
 
 	<aside class="app-sidebar">
-		<div class="app-sidebar__user" style="padding-left: 40px">
+		<div class="app-sidebar__user" style="padding-left: 9%">
 			<img src="miniorange/sso/resources/images/miniorange.png"
 				style="width: 37.25px; height: 50px;" alt="User Image">
 			<div style="margin-left: 15px;">
-				<p class="app-sidebar__user-name">PHP SAML</p>
-				<p class="app-sidebar__user-designation">Connector</p>
+				<p class="app-sidebar__user-name">Laravel SSO SP</p>
+				<p class="app-sidebar__user-designation">Plugin</p>
 			</div>
 		</div>
 		<ul class="app-menu">

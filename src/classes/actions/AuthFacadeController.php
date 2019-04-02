@@ -121,6 +121,7 @@ class AuthFacadeController extends Controller
     {
         
         return redirect('slo');
+        exit;
         //include_once __DIR__.'/../../logout.php'; 
     }
 }

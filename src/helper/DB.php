@@ -44,7 +44,7 @@ class DB extends Controller
         $active_config = LaraDB::table('mo_config')->get()->first();
         return $active_config;
     }
-    
+
     public static function get_registered_user()
     {
         self::startConnection();
@@ -52,10 +52,17 @@ class DB extends Controller
         return $registered_user;
     }
 
-    public static function register_user($email, $password){
+    public static function register_user($email, $password)
+    {
         self::startConnection();
-        LaraDB::table('mo_admin')->updateOrInsert(['id' => 1],['email' => $email,'password' => $password]);
+        LaraDB::table('mo_admin')->updateOrInsert([
+            'id' => 1
+        ], [
+            'email' => $email,
+            'password' => $password
+        ]);
     }
+
     protected static function startConnection()
     {
         $connection = array(
@@ -66,24 +73,32 @@ class DB extends Controller
             'username' => getenv('DB_USERNAME'),
             'password' => getenv('DB_PASSWORD')
         );
-        /*if(Schema::hasTable('mo_admin'))
-        {echo "has table";exit;}
-        else
-        {echo "no table";exit;}*/
+        /*
+         * if(Schema::hasTable('mo_admin'))
+         * {echo "has table";exit;}
+         * else
+         * {echo "no table";exit;}
+         */
         $Capsule = new LaraDB();
         $Capsule->addConnection($connection);
-        $Capsule->setAsGlobal(); // this is important
+        $Capsule->setAsGlobal(); // this is important. makes the database manager object globally available
         $Capsule->bootEloquent();
         try {
-            if(LaraDB::table('mo_config')->get()->first()==NULL)
-        {
-            LaraDB::table('mo_config')->updateOrInsert(
-                ['id' => 1],['mo_saml_host_name' => 'https://auth.miniorange.com']);
-        }
-        }
-        catch(PDOException $e){
-            if($e->getCode() == '42S02')
-            header('Location: create_tables');
+
+            if (LaraDB::table('mo_config')->get()->first() == NULL) {
+                LaraDB::table('mo_config')->updateOrInsert([
+                    'id' => 1
+                ], [
+                    'mo_saml_host_name' => 'https://auth.miniorange.com'
+                ]);
+            }
+        } catch (PDOException $e) {
+
+            if ($e->getCode() === '42S02') {
+
+                header('Location: create_tables');
+                exit();
+            }
         }
     }
 }

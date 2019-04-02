@@ -34,12 +34,12 @@
 	<div class="app-sidebar__overlay" data-toggle="sidebar"></div>
 
 	<aside class="app-sidebar">
-		<div class="app-sidebar__user" style="padding-left: 40px">
+		<div class="app-sidebar__user" style="padding-left: 9%">
 			<img src="miniorange/sso/resources/images/miniorange.png"
 				style="width: 37.25px; height: 50px;" alt="User Image">
 			<div style="margin-left: 15px;">
-				<p class="app-sidebar__user-name">PHP SAML</p>
-				<p class="app-sidebar__user-designation">Connector</p>
+				<p class="app-sidebar__user-name">Laravel SSO SP</p>
+				<p class="app-sidebar__user-designation">Plugin</p>
 			</div>
 		</div>
 		<ul class="app-menu">
@@ -83,10 +83,12 @@
 					<div class="col-lg-12">
                 <?php
                 if (mo_saml_is_customer_registered()) {
-                    if (mo_saml_is_customer_license_verified())
+                    if (mo_saml_is_customer_license_verified()) {
                         mo_saml_show_customer_details();
-                    else
+                    } else {
+                        
                         mo_saml_show_verify_license_page();
+                    }
                 } else {
                     if (DB::get_option('mo_saml_verify_customer') == 'true') {
                         mo_saml_show_verify_password_page();
@@ -110,7 +112,7 @@ if (isset($_SESSION['show_success_msg'])) {
     echo '<script>
     var message = document.getElementById("saml_message");
     message.classList.add("success-message");
-    message.innerText = "' . setupDB::get_option('mo_saml_message') . '"
+    message.innerText = "' . setupDB::get_option('mo_saml_message') . '";
     </script>';
     unset($_SESSION['show_success_msg']);
     exit();
@@ -119,7 +121,8 @@ if (isset($_SESSION['show_error_msg'])) {
     echo '<script>
     var message = document.getElementById("saml_message");
     message.classList.add("error-message");
-    message.innerText = "' . DB::get_option('mo_saml_message') . '"
+    message.innerText = "' . DB::get_option('mo_saml_message') . '";
+    message.overflow = "break-word";
     </script>';
     unset($_SESSION['show_error_msg']);
 }

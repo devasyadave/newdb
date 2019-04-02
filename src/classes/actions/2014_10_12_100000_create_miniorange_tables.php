@@ -22,7 +22,7 @@ class CreateMiniorangeTables extends Migration
             $table->string('mo_saml_admin_api_key', 100);
             $table->string('mo_saml_customer_token', 100);
             $table->string('mo_saml_free_version', 100);
-            $table->string('mo_saml_message', 100);
+            $table->string('mo_saml_message', 300);
             $table->string('mo_saml_registration_status', 100);
             $table->string('vl_check_t', 100);
             $table->string('sml_lk', 100);
@@ -44,13 +44,14 @@ class CreateMiniorangeTables extends Migration
             $table->string('force_sso', 100);
             $table->string('application_url', 100);
             $table->string('site_logout_url', 100);
-            $table->string('saml_x509_certificate', 500);
+            $table->string('saml_x509_certificate', 1500);
             $table->string('mo_saml_new_registration', 10);
             $table->string('mo_saml_admin_phone', 20);
             $table->string('mo_saml_verify_customer', 10);
             $table->string('mo_saml_idp_config_complete', 100);
             $table->string('mo_saml_transactionId', 100);
             $table->string('mo_saml_guest_enabled',10);
+            $table->string('session_index',100);
         });
         Schema::create('mo_admin', function (Blueprint $table) {
             $table->string('id',10);
